@@ -77,6 +77,8 @@ func (vs *VmState) injectLuaApi() {
 	l := vs.Vm
 	C.lua_createtable(l, 0, 32)
 
+	C.lua_pushlightuserdata(l, unsafe.Pointer(uintptr(0)))
+	C.lua_setfield(l, -2, C.CString("null"))
 	for name, i := range luaApiInts {
 		C.lua_pushinteger(l, C.lua_Integer(i))
 		C.lua_setfield(l, -2, name)

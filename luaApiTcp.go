@@ -7,7 +7,6 @@ package golua
 */
 import "C"
 import (
-	"bufio"
 	"fmt"
 	"io"
 	"io/ioutil"
@@ -107,25 +106,15 @@ func luaApiTcpReceiveInner(conn *tcpConn, sz int, timeout int) ([]byte, error) {
 	var bytes []byte
 	var err error
 	if sz == 0 {
-		reader := bufio.NewReader(conn)
-		bytes, err = reader.ReadBytes('\n')
+		bytes, err = conn.bufReader.ReadBytes('\n')
 		if len(bytes) > 0 && bytes[len(bytes)-1] == '\r' {
 			bytes = bytes[:len(bytes)-1]
 		}
 	} else if sz < 0 {
-		bytes, err = ioutil.ReadAll(conn)
+		bytes, err = ioutil.ReadAll(conn.bufReader)
 	} else {
-		sz := int(sz)
-		reader := bufio.NewReader(conn)
-		bytes = make([]byte, 0, sz)
-		for i := 0; i < sz; i = i + 1 {
-			var b byte
-			b, err = reader.ReadByte()
-			if nil != err {
-				break
-			}
-			bytes[i] = b
-		}
+		bytes = make([]byte, sz)
+		_, err = conn.bufReader.Read(bytes)
 	}
 
 	if io.EOF == err {

@@ -5,6 +5,7 @@ package golua
 import (
 	"log"
 	"regexp"
+	"sync"
 )
 
 type logger struct {
@@ -29,7 +30,8 @@ func (logger *logger) init(args *VmInitArgs) {
 }
 
 type goObjRefs struct {
-	conns map[*tcpConn]bool
+	conns     map[*tcpConn]bool
+	connsLock sync.Mutex
 }
 
 func (refs *goObjRefs) init() {
@@ -41,10 +43,12 @@ func (refs *goObjRefs) deinit() {
 }
 
 type vmCtx struct {
-	logger     logger
-	goObjRefs  goObjRefs
-	connPools  map[string]*connPool
-	regexCache map[string]*regexp.Regexp
+	logger         logger
+	goObjRefs      goObjRefs
+	connPools      map[string]*connPool
+	connPoolsLock  sync.Mutex
+	regexCache     map[string]*regexp.Regexp
+	regexCacheLock sync.Mutex
 }
 
 func (ctx *vmCtx) init(args *VmInitArgs) {

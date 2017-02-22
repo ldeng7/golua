@@ -16,6 +16,8 @@ func luaApiRegexGetRe(l luaState, reStr string, doCache bool) (*regexp.Regexp, e
 	}
 	C.lua_getfield(l, C.LUA_REGISTRYINDEX, cStrLuaRegKey_vmCtx)
 	ctx := (*vmCtx)(C.lua_touserdata(l, -1))
+	ctx.regexCacheLock.Lock()
+	defer ctx.regexCacheLock.Unlock()
 	re, ok := ctx.regexCache[reStr]
 	if ok {
 		return re.Copy(), nil
