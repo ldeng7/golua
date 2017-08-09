@@ -3,8 +3,6 @@
 package golua
 
 /*
-#include <unistd.h>
-#include <pthread.h>
 #include <goluaCommon.h>
 */
 import "C"

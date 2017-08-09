@@ -38,11 +38,14 @@ func main() {
 		--ctx.n, ctx.err2 = go.tcp_send(c, 'ldeng')
 		--ctx.pid = go.pid()
 
-		local mysql = require "mysql"
-		local db, _ = mysql:new()
-		db:connect({host = "127.0.0.1", port = 3306, database = "test", user = "root", password = "abcabc"})
-		local res, _ = db:query("SELECT count(1) AS cnt FROM tests LIMIT 2;")
-		ctx.cnt = res[1].cnt
+		local mysql = require "redis"
+			local db, err = mysql:new()
+			go.log(1,err)
+			_,err=db:connect("127.0.0.1", 6379)
+			go.log(1,err)
+			local res, err = db:get("ldeng")
+			go.log(1,err)
+			ctx.res=res
 
 		return ctx`, "test")
 	var wg sync.WaitGroup

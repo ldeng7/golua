@@ -24,7 +24,7 @@ func luaApiRegexGetRe(l luaState, reStr string, doCache bool) (*regexp.Regexp, e
 	}
 	var err error
 	re, err = regexp.Compile(reStr)
-	if nil == re {
+	if nil != err {
 		return nil, err
 	}
 	ctx.regexCache[reStr] = re
@@ -36,7 +36,7 @@ func GoluaLuaApi_re_find(l luaState) C.int {
 	// from, to, err = go.re_find(s, regex, do_catch, _, nth)
 
 	re, err := luaApiRegexGetRe(l, luaToGoString(l, 2), 1 == C.lua_toboolean(l, 3))
-	if nil == re {
+	if nil != err {
 		C.lua_pushnil(l)
 		C.lua_pushnil(l)
 		luaApiPushErr(l, err)
@@ -68,7 +68,7 @@ func GoluaLuaApi_re_gmatch(l luaState) C.int {
 	// m, err = go.re_gmatch(s, regex, do_catch, limit)
 
 	re, err := luaApiRegexGetRe(l, luaToGoString(l, 2), 1 == C.lua_toboolean(l, 3))
-	if nil == re {
+	if nil != err {
 		C.lua_pushnil(l)
 		luaApiPushErr(l, err)
 		return 2
@@ -105,7 +105,7 @@ func GoluaLuaApi_re_gsub(l luaState) C.int {
 	// m, err = go.re_gsub(s, regex, repl, do_catch)
 
 	re, err := luaApiRegexGetRe(l, luaToGoString(l, 2), 1 == C.lua_toboolean(l, 4))
-	if nil == re {
+	if nil != err {
 		C.lua_pushnil(l)
 		luaApiPushErr(l, err)
 		return 2
@@ -122,7 +122,7 @@ func GoluaLuaApi_re_match(l luaState) C.int {
 	// m, err = go.re_match(s, regex, do_catch)
 
 	re, err := luaApiRegexGetRe(l, luaToGoString(l, 2), 1 == C.lua_toboolean(l, 3))
-	if nil == re {
+	if nil != err {
 		C.lua_pushnil(l)
 		luaApiPushErr(l, err)
 		return 2

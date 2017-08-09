@@ -72,7 +72,7 @@ func GoluaLuaApi_tcp_connect(l luaState) C.int {
 	}
 
 	conn, err := ctx.getConnFromPool(host, port, timeout, poolKey)
-	if nil != conn {
+	if nil == err {
 		C.goluaLua_pushlightuserdata(l, C.ulong(uintptr(unsafe.Pointer(conn))))
 		C.lua_setfield(l, 1, cStrLuaTableKey_tcp_conn)
 		C.lua_pushboolean(l, 1)
